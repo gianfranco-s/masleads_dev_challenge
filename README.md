@@ -1,15 +1,21 @@
-sudo -u postgres psql
 
-DROP DATABASE masleads;
-DROP ROLE masleads;
+## Set up local PostgreSQL
+```
+$ sudo -u postgres psql
+```
 
-CREATE ROLE masleads WITH PASSWORD 'masleads-pwd';
-ALTER ROLE masleads WITH LOGIN;
-CREATE DATABASE masleads WITH OWNER masleads;
-\c masleads
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "ElementsToProcess" TO masleads;
-GRANT USAGE ON SCHEMA public TO masleads;
-GRANT USAGE, SELECT ON SEQUENCE "ElementsToProcess_id_seq" TO masleads;
+```
+postgres=# DROP DATABASE masleads;
+postgres=# DROP ROLE masleads;
+
+postgres=# CREATE ROLE masleads WITH PASSWORD 'masleads-pwd';
+postgres=# ALTER ROLE masleads WITH LOGIN;
+postgres=# CREATE DATABASE masleads WITH OWNER masleads;
+postgres=# \c masleads
+postgres=# GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "ElementsToProcess" TO masleads;
+postgres=# GRANT USAGE ON SCHEMA public TO masleads;
+postgres=# GRANT USAGE, SELECT ON SEQUENCE "ElementsToProcess_id_seq" TO masleads;
+```
 
 
 ## Run the project locally
