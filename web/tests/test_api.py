@@ -26,11 +26,11 @@ def test_show_elements():
             'name': 'Element 1',
         },
         {
-        'id': 2,
-        'idBulk': 1,
-        'retries': 1,
-        'status': 20,
-        'name': 'Element 2',
+            'id': 2,
+            'idBulk': 1,
+            'retries': 1,
+            'status': 20,
+            'name': 'Element 2',
         }
     )
     
@@ -40,7 +40,7 @@ def test_show_elements():
 
 
 
-def test_show_elements_with_default_status(default_status=60):
+def test_show_elements_with_default_status(default_status: int = 60):
     response = app.test_client().get('/show-elements-with-default-status', headers=HEADERS)
     data = json.loads(response.data.decode('utf-8'))
     
@@ -54,7 +54,7 @@ def test_insert_element_with_all_mandatory_values():
         'status': 999,
         'name': 'Test insert element'
     }
-    response = app.test_client().get('/insert-element', 
+    response = app.test_client().post('/insert-element', 
                                      headers=HEADERS,
                                      content_type='application/json',
                                      data=json.dumps(test_insert_element))
@@ -67,12 +67,13 @@ def test_insert_element_with_missing_name():
     test_insert_element = {
         'status': 999
     }
-    response = app.test_client().get('/insert-element', 
+    response = app.test_client().post('/insert-element', 
                                      headers=HEADERS,
                                      content_type='application/json',
                                      data=json.dumps(test_insert_element))
     
     assert response.status_code == 400
+    assert 'Missing "name" or "status" in request' in response.data.decode('utf-8')
 
 
 def test_insert_element_with_all_values():
@@ -82,7 +83,7 @@ def test_insert_element_with_all_values():
         'retries': 99,
         'idBulk': 9999
     }
-    response = app.test_client().get('/insert-element', 
+    response = app.test_client().post('/insert-element', 
                                      headers=HEADERS,
                                      content_type='application/json',
                                      data=json.dumps(test_insert_element))
