@@ -1,12 +1,24 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
+from flask_httpauth import HTTPBasicAuth
 
 from web.database import Session
 from web.models import ElementsToProcess
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
+
+API_USR = 'masleads-api-usr'
+API_PWD = 'masleads-api-pwd'
+
+
+@auth.verify_password
+def authenticate(username, password):
+    is_user_valid = username == API_USR and password == API_PWD
+    return True if is_user_valid else False
 
 
 @app.route('/show-elements', methods=['GET'])
+@auth.login_required
 def show_elements():
     with Session() as session:
         elements = session.query(ElementsToProcess).all()
@@ -16,6 +28,7 @@ def show_elements():
 
 
 @app.route('/show-elements-with-default-status', methods=['GET'])
+@auth.login_required
 def show_elements_with_default_status(default_status: int = 60):
     with Session() as session:
         elements = session.query(ElementsToProcess).filter(ElementsToProcess.status == default_status)
@@ -25,6 +38,7 @@ def show_elements_with_default_status(default_status: int = 60):
 
 
 @app.route('/insert-element', methods=['POST'])
+@auth.login_required
 def insert_element(default_id_bulk: int = 0, default_retries: int = 0):
     data = request.get_json()
     if 'status' in data and 'name' in data:
