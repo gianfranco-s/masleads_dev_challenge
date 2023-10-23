@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  web:
+    build:
+      dockerfile: ./web/Dockerfile
+    command: python -m flask run --host=0.0.0.0
+    volumes:
+      - ./web/:/usr/src/web
+    ports:
+      - 5000
+    environment:
+      - POSTGRES_USR=${POSTGRES_USR}
+      - POSTGRES_PWD=${POSTGRES_PWD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14
+    volumes:
+      - ./database/db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USR}
+      - POSTGRES_PASSWORD=${POSTGRES_PWD}
+      - POSTGRES_DB=${POSTGRES_DB}
