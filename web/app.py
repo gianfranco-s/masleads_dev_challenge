@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_httpauth import HTTPBasicAuth
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from web.database import Session
 from web.models import ElementsToProcess
@@ -10,6 +11,21 @@ auth = HTTPBasicAuth()
 API_USR = 'masleads-api-usr'
 API_PWD = 'masleads-api-pwd'
 
+
+
+SWAGGER_URL = ''
+API_URL = '/static/swagger.yml'
+
+# Call factory function to create our blueprint
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "masleads - dev challenge"
+    },
+)
+
+app.register_blueprint(swaggerui_blueprint)
 
 @auth.verify_password
 def authenticate(username, password):

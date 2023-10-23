@@ -1,0 +1,149 @@
+openapi: 3.0.3
+
+
+paths:
+  /insert-elements:
+    post:
+      tags:
+        - insert-elements
+      requestBody:
+        description: Insert elements
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementsToProcess'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElementsToProcess'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ElementsToProcess'
+        '405':
+          description: Invalid input
+  /show-elements:
+    get:
+      tags:
+        - show-elements
+      parameters:
+        - name: status
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: available
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid status value
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+  /show-elements-with-default-status:
+    get:
+      tags:
+        - show-elements-with-default-status
+      parameters:
+        - name: tags
+          in: query
+          description: Tags to filter by
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid tag value
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+
+components:
+  schemas:
+    ElementsToProcess:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        idBulk:
+          type: integer
+          format: int64
+          example: 1
+        retries:
+          type: integer
+          format: int64
+          example: 20
+        status:
+          type: integer
+          format: int64
+          example: 99
+        name:
+          type: string
+          example: Element 1
+  requestBodies:
+    Pet:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Pet'
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
